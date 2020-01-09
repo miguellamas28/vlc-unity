@@ -51,52 +51,71 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API Print(char* toPrint)
     DEBUG("%s", toPrint);
 }
 
+extern "C"
+{
+    typedef void(*FuncCallBack)(const char* message, int size);
+    static FuncCallBack callbackInstance = nullptr;
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API RegisterDebugCallback(FuncCallBack cb) {
+    callbackInstance = cb;
+}
+
+void static Log(const char* message) {
+    if (callbackInstance != nullptr)
+        callbackInstance(message, (int)strlen(message));
+}
+
 extern "C" libvlc_media_player_t* UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
 CreateAndInitMediaPlayer(libvlc_instance_t* libvlc)
 {
     if(libvlc == NULL)
     {
-        DEBUG("libvlc is NULL, aborting...");
+        Log("libvlc is NULL, aborting...");
         return NULL;
     }
 
     inst = libvlc;
 
-    DEBUG("LAUNCH");
+    Log("LAUNCH");
 
     if (inst == NULL) {
-        DEBUG("LibVLC is not instanciated");
+        Log("LibVLC is not instanciated");
         return NULL;
     }
 
     if(mp != NULL)
-        abort();
+    {
+        Log("mp is already setup...");
+        return mp;
+    }
+
     mp = libvlc_media_player_new(inst);
     RenderAPI* s_CurrentAPI;
 
     if (mp == NULL) {
-        DEBUG("Error initializing media player");
+        Log("Error initializing media player");
         goto err;
     }
 
-    DEBUG("Calling... Initialize Render API \n");
+    Log("Calling... Initialize Render API \n");
 
     s_DeviceType = s_Graphics->GetRenderer();
 
-    DEBUG("Calling... CreateRenderAPI \n");
+    Log("Calling... CreateRenderAPI \n");
 
     s_CurrentAPI = CreateRenderAPI(s_DeviceType);
     
     if(s_CurrentAPI == NULL)
     {
-        DEBUG("s_CurrentAPI is NULL \n");    
+        Log("s_CurrentAPI is NULL \n");    
     }    
     
-    DEBUG("Calling... ProcessDeviceEvent \n");
+    Log("Calling... ProcessDeviceEvent \n");
     
     s_CurrentAPI->ProcessDeviceEvent(kUnityGfxDeviceEventInitialize, s_UnityInterfaces);
 
-    DEBUG("Calling... setVlcContext s_CurrentAPI=%p mp=%p", s_CurrentAPI, mp);
+    // Log("Calling... setVlcContext s_CurrentAPI=" << s_CurrentAPI " mp=" << mp);
     s_CurrentAPI->setVlcContext(mp);
 
     contexts[mp] = s_CurrentAPI;
@@ -104,6 +123,7 @@ CreateAndInitMediaPlayer(libvlc_instance_t* libvlc)
     return mp;
 err:
     if ( mp ) {
+        Log("Error in CreateAndInitMediaPlayer!!!!!");
         // Stop playing
         libvlc_media_player_stop_async (mp);
 
@@ -156,12 +176,12 @@ static RenderAPI* EarlyRenderAPI = NULL;
 static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType)
 {
     // Create graphics API implementation upon initialization
-       if (eventType == kUnityGfxDeviceEventInitialize) {
-            DEBUG("Initialise Render API");
-            if (EarlyRenderAPI != NULL) {
-                DEBUG("*** EarlyRenderAPI != NULL while initialising ***");
-                return;
-            }
+    if (eventType == kUnityGfxDeviceEventInitialize) {
+        DEBUG("Initialise Render API");
+        if (EarlyRenderAPI != NULL) {
+            DEBUG("*** EarlyRenderAPI != NULL while initialising ***");
+            return;
+        }
 
         DEBUG("s_Graphics->GetRenderer() \n");
 
@@ -172,6 +192,9 @@ static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType ev
         EarlyRenderAPI = CreateRenderAPI(s_DeviceType);
         return;
     }
+    else if (eventType == kUnityGfxDeviceEventShutdown)
+	{
+	}
 
     if(EarlyRenderAPI){
         EarlyRenderAPI->ProcessDeviceEvent(eventType, s_UnityInterfaces);

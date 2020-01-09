@@ -2,6 +2,8 @@ using UnityEngine;
 using System;
 using System.Collections;
 using LibVLCSharp.Shared;
+using System.Runtime.InteropServices;
+using AOT;
 
 public class UseRenderingPlugin : MonoBehaviour
 {
@@ -10,13 +12,26 @@ public class UseRenderingPlugin : MonoBehaviour
     const int seekTimeDelta = 2000;
     Texture2D tex = null;
 
+    [DllImport("VLCUnityPlugin")]
+    static extern void RegisterDebugCallback(debugCallback cb);
+    delegate void debugCallback(IntPtr request, int size);
+    [MonoPInvokeCallback(typeof(debugCallback))]
+    static void OnDebugCallback(IntPtr request, int size)
+    {
+        string debug_string = Marshal.PtrToStringAnsi(request, size);
+        Debug.Log(debug_string);
+    }
+
     void Awake()
     {
+        Debug.Log("Calling RegisterDebugCallback");
+        RegisterDebugCallback(OnDebugCallback);
+
         Core.Initialize(Application.dataPath);
 
-        _libVLC = new LibVLC("--verbose=2");
+         _libVLC = new LibVLC("--verbose=2");
 
-        _mediaPlayer = new MediaPlayer(_libVLC);
+        _mediaPlayer = new MediaPlayer(_libVLC); //this line.
 
         StartCoroutine("CallPluginAtEndOfFrames");
 
