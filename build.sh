@@ -41,13 +41,13 @@ done
 if [ -z $PLATFORM ] ||  [ -z $ARCH ]
 then
     echo "Platform and/or Arch undefined... Building for Windows x64."
-    PLATFORM=win
-    ARCH=x86_64
+    PLATFORM=android
+    ARCH=ARM64
 fi
 
 echo "Building for OS '$PLATFORM' with target arch '$ARCH'"
 
 OUTPUT="../Assets/VLCUnity/Plugins/$ARCH"
 
-cd PluginSource && make clean && make PLATFORM=$PLATFORM ARCH=$ARCH
+cd PluginSource && make clean && make   PLATFORM=$PLATFORM ARCH=$ARCH
 mv VLCUnityPlugin.{dll,pdb} $OUTPUT -f

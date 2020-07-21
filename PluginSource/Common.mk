@@ -4,7 +4,8 @@ SRCS = RenderingPlugin.cpp RenderAPI.cpp RenderAPI_D3D11.cpp Log.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
-CXXFLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I./sdk/include/ -DNDEBUG
+CXXFLAGS = -O3 -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I./sdk/include/ -I/vlc/include   -DNDEBUG
+INCLUDES = -I/usr/include/vlc/vlc.h
 
 LIB=./sdk/lib/
 
@@ -38,7 +39,7 @@ clean:
 	rm -f $(OUTPUT) $(OBJS)
 
 $(OUTPUT): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $(OUTPUT) $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $(OUTPUT) $(OBJS) $(LIBS) 
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -$(COMPILEFLAG) -c -o $@ $<
+	$(CXX) $(CXXFLAGS)   -$(COMPILEFLAG) -c -o $@ $<

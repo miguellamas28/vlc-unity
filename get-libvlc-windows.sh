@@ -1,15 +1,16 @@
 #! /bin/bash
 sourceLocation="Assets/PluginSource"
 
-rm ./build.7z
-rm -rf ./build
-rm -rf $sourceLocation/sdk
-rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/libvlc.dll
-rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/libvlccore.dll
-rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/hrtfs
-rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/locale
-rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/lua
-rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/plugins
+rm ./build.7z > /dev/null
+rm -rf ./build > /dev/null
+rm -rf $sourceLocation/sdk > /dev/null
+rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/libvlc.dll > /dev/null
+rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/libvlccore.dll > /dev/null
+rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/hrtfs > /dev/null 
+rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/locale > /dev/null
+rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/lua > /dev/null 
+rm -rf Assets/VLC-Unity-Windows/Plugins/x86_64/plugins > /dev/null
+
 
 7z x vlc-4.0.0-dev-win64.7z -o./build
 
