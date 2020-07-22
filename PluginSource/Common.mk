@@ -4,9 +4,9 @@ SRCS = RenderingPlugin.cpp RenderAPI.cpp RenderAPI_D3D11.cpp Log.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
-CXXFLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I./sdk/include/ -DNDEBUG
+CXXFLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I/vlc-dev/include/ -DNDEBUG
 
-LIB=./sdk/lib/
+LIB=/vlc-dev/lib
 
 LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
 
@@ -21,7 +21,7 @@ COMPILEFLAG = m32
 endif
 
 OUTPUT = $(TARGET).dll
-WINDOWS_BINARIES = Assets/VLCUnity/Plugins/x86_64
+WINDOWS_BINARIES = /Plugins/x86_64
 
 CXX = $(BIN_PREFIX)-c++
 STRIP = $(BIN_PREFIX)-strip
@@ -32,7 +32,7 @@ copy: $(OUTPUT)
 ifndef NOSTRIP
 	$(STRIP) $(OUTPUT)
 endif
-	cp -f $(OUTPUT) ../$(WINDOWS_BINARIES)/$(OUTPUT)
+	cp -f $(OUTPUT)  $(WINDOWS_BINARIES)/$(OUTPUT)
 
 clean:
 	rm -f $(OUTPUT) $(OBJS)

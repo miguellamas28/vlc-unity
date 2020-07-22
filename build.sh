@@ -47,7 +47,7 @@ fi
 
 echo "Building for OS '$PLATFORM' with target arch '$ARCH'"
 
-OUTPUT="../Assets/VLCUnity/Plugins/$ARCH"
+OUTPUT="/Plugins/$ARCH"
 
 cd PluginSource && make clean && make PLATFORM=$PLATFORM ARCH=$ARCH
 mv VLCUnityPlugin.{dll,pdb} $OUTPUT -f
